@@ -8,27 +8,20 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
-
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
   const signUp = async (email, password, displayName) => {
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: displayName || email.split('@')[0] }
-      }
+      email, password,
+      options: { data: { display_name: displayName || email.split('@')[0] } }
     })
     return { data, error }
   }
@@ -43,16 +36,25 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  const value = {
-    user,
-    loading,
-    signUp,
-    signIn,
-    signOut,
-    displayName: user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User'
+  const updatePassword = async (newPassword) => {
+    const { data, error } = await supabase.auth.updateUser({ password: newPassword })
+    return { data, error }
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  const updateProfile = async (updates) => {
+    const { data, error } = await supabase.auth.updateUser({ data: updates })
+    if (!error) setUser(prev => ({ ...prev, user_metadata: { ...prev?.user_metadata, ...updates } }))
+    return { data, error }
+  }
+
+  return (
+    <AuthContext.Provider value={{
+      user, loading, signUp, signIn, signOut, updatePassword, updateProfile,
+      displayName: user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User'
+    }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)

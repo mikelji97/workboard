@@ -2,39 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0a0a0f;
-  color: rgba(255, 255, 255, 0.9);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
+/* Light mode (default) */
+body { background: #f8f9fb; color: #1a1a2e; }
+/* Dark mode */
+.dark body, body.dark-body { background: #0a0a0f; color: rgba(255,255,255,0.9); }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
-/* smooth transitions for inputs */
-input, textarea {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-input:focus, textarea:focus {
-  outline: none;
-}
+input, textarea { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+input:focus, textarea:focus { outline: none; }
 
-/* animation keyframes */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
-}
+.animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+
+/* Kanban drag styles */
+.kanban-card-dragging { opacity: 0.5; transform: rotate(3deg); }
+.kanban-column-over { ring: 2px; }
+
+/* Rich text editor */
+.editor-content { min-height: 200px; outline: none; line-height: 1.7; }
+.editor-content p { margin-bottom: 0.5em; }
+.editor-content h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 0.5em; }
+.editor-content h2 { font-size: 1.25em; font-weight: 600; margin-bottom: 0.5em; }
+.editor-content ul { list-style: disc; padding-left: 1.5em; }
+.editor-content ol { list-style: decimal; padding-left: 1.5em; }
+.editor-content blockquote { border-left: 3px solid #a78bfa; padding-left: 1em; opacity: 0.8; }
